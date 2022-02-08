@@ -1194,3 +1194,15 @@ function doNotTruncateClassNamesContainingUnderscoresAtStartOfType() {
 function doNotTruncateClassNamesContainingUnderscoresInTheMiddelOfType() {
     return 0;
 }
+
+/**
+ * Using generic as a type hint should satisfy a specified object parameter type.
+ * @see https://phpstan.org/blog/generics-in-php-using-phpdocs
+ *
+ * @param Collection<int, string> $values An object with int, string pairs.
+ *
+ * @return void
+ */
+public function genericType(Collection $values) {
+
+}// end genericType()
