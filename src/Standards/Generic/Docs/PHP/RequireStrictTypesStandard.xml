@@ -1,0 +1,40 @@
+<documentation title="Require Strict Types">
+    <standard>
+    <![CDATA[
+    PHP files should declare strict types.
+    ]]>
+    </standard>
+    <code_comparison>
+        <code title="Valid: Strict types declaration is present and enabled.">
+        <![CDATA[
+<?php
+
+declare(strict_types=1);
+        ]]>
+        </code>
+        <code title="Invalid: Missing required strict_types declaration.">
+        <![CDATA[
+<?php
+
+$a = 'foo';
+        ]]>
+        </code>
+    </code_comparison>
+    <standard>
+    <![CDATA[
+    Strict types should be enabled.
+    ]]>
+    </standard>
+    <code_comparison>
+        <code title="Valid: Strict types declaration is present and enabled.">
+        <![CDATA[
+<?php declare(ticks=1, strict_types=1);
+        ]]>
+        </code>
+        <code title="Invalid: Required strict_types declaration found, but it is disabled.">
+        <![CDATA[
+<?php declare(ticks=1, strict_types=0);
+        ]]>
+        </code>
+    </code_comparison>
+</documentation>
