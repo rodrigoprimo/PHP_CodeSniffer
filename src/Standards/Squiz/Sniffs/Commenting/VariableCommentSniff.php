@@ -30,16 +30,18 @@ class VariableCommentSniff extends AbstractVariableSniff
     {
         $tokens = $phpcsFile->getTokens();
         $ignore = [
-            T_NS_SEPARATOR => T_NS_SEPARATOR,
-            T_NULLABLE     => T_NULLABLE,
-            T_PRIVATE      => T_PRIVATE,
-            T_PROTECTED    => T_PROTECTED,
-            T_PUBLIC       => T_PUBLIC,
-            T_READONLY     => T_READONLY,
-            T_STATIC       => T_STATIC,
-            T_STRING       => T_STRING,
-            T_VAR          => T_VAR,
-            T_WHITESPACE   => T_WHITESPACE,
+            T_NS_SEPARATOR      => T_NS_SEPARATOR,
+            T_NULLABLE          => T_NULLABLE,
+            T_PRIVATE           => T_PRIVATE,
+            T_PROTECTED         => T_PROTECTED,
+            T_PUBLIC            => T_PUBLIC,
+            T_READONLY          => T_READONLY,
+            T_STATIC            => T_STATIC,
+            T_STRING            => T_STRING,
+            T_TYPE_INTERSECTION => T_TYPE_INTERSECTION,
+            T_TYPE_UNION        => T_TYPE_UNION,
+            T_VAR               => T_VAR,
+            T_WHITESPACE        => T_WHITESPACE,
         ];
 
         for ($commentEnd = ($stackPtr - 1); $commentEnd >= 0; $commentEnd--) {

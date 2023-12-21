@@ -402,3 +402,35 @@ class ReadOnlyProps
 
      private readonly string $variable;
 }
+
+// Issue https://github.com/PHPCSStandards/PHP_CodeSniffer/issues/178
+class Foo
+{
+    /**
+     * This is fine.
+     *
+     * @var string|integer
+     */
+    public $correct_not_missing_docblock_union;
+
+    /**
+     * This snippet gets flagged with "Missing member variable doc comment (Squiz.Commenting.VariableComment.Missing)"
+     *
+     * @var string|integer
+     */
+    public string|int $BUG_missing_docblock_with_union_type;
+
+    /**
+     * This is fine
+     *
+     * @var InterfaceA&InterfacB
+     */
+    public $correct_not_missing_docblock_intersection;
+
+    /**
+     * This snippet gets flagged with "Missing member variable doc comment (Squiz.Commenting.VariableComment.Missing)"
+     *
+     * @var InterfaceA&InterfacB
+     */
+    public InterfaceA&InterfacB $BUG_missing_docblock_intersection;
+}
