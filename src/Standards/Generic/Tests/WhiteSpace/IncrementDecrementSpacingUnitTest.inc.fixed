@@ -34,3 +34,6 @@ $obj->prop['key']++;
 
 --ClassName::$prop;
 --ClassName::$prop;
+
+--$tabs;
+$tabs--;
