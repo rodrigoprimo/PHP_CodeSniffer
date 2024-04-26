@@ -91,25 +91,25 @@ if ($a) {
 </div>
 
 <?php
-switch ($this->error):
-    case Shop_Customer :: ERROR_INVALID_GENDER: ?>
-        Ung&uuml;ltiges Geschlecht!
-    <?php break;
-    case Shop_Customer :: ERROR_EMAIL_IN_USE: ?>
-        Die eingetragene E-Mail-Adresse ist bereits registriert.
-    <?php break;
-endswitch;
 
-if ($this->allowShopping !== true):
-    if ($this->status != Shop_Cart :: OK):
-        switch ($this->status):
-            case Shop_Cart :: NOT_FOUND:
-            echo 'foo';
-        endswitch;
+if ($this->error == Shop_Customer :: ERROR_INVALID_GENDER): ?>
+    Invalid gender!
+<?php elseif ($this->error == Shop_Customer :: ERROR_EMAIL_IN_USE): ?>
+    Invalid email!
+<?php endif;
+
+
+
+if ($value):
+    if ($anotherValue):
+		foreach ($array as $element):
+            echo $element;
+        endforeach;
     endif;
 else:
     echo 'foo';
 endif;
+
 
 // ELSE IF split over multiple lines (not inline)
 if ($test) {
