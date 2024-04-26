@@ -297,3 +297,11 @@ foreach ($array as $sniffShouldBailEarly)
 	/* some comment */;
 
 do ; while ($sniffShouldBailEarly > 5);
+
+do echo $i++; while ($i < 5);
+
+// phpcs:set Generic.ControlStructures.InlineControlStructure error false
+if ($something) echo 'hello';
+// phpcs:set Generic.ControlStructures.InlineControlStructure error true
+
+if ($noSpaceAfterClosingParenthesis)echo 'hello';
