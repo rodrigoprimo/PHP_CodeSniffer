@@ -93,3 +93,9 @@ enum Foo: string {
     /* testKeywordAsEnumCaseNameShouldBeString7 */
     case ARRAY = 'array';
 }
+
+switch ($value):
+    /* testSwitchCaseWithoutBreakReturn */
+    case 1:
+        echo 'one';
+endswitch;
