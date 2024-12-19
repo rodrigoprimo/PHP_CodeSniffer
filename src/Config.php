@@ -204,8 +204,8 @@ class Config
      * - Keys: lowercase version of the generator name.
      * - Values: name of the generator PHP class.
      *
-     * Note: once support for PHP < 5.6 is dropped, this property should be refactored into a class
-     * constant.
+     * {@internal Once support for PHP < 5.6 is dropped, this property should be refactored into a class
+     * constant.}
      *
      * @var array<string, string>
      */
@@ -1256,7 +1256,7 @@ class Config
                 if (isset(self::$validGenerators[$lowerCaseGeneratorName]) === false) {
                     $validOptions = implode(', ', array_values(self::$validGenerators));
                     $error        = sprintf(
-                        'ERROR: "%s" is not a valid generator. Valid options are: %s.'.PHP_EOL.PHP_EOL,
+                        'ERROR: "%s" is not a valid generator. The following generators are supported: %s.'.PHP_EOL.PHP_EOL,
                         $generatorName,
                         $validOptions
                     );

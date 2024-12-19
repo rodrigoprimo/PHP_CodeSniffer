@@ -23,7 +23,7 @@ final class GeneratorArgTest extends TestCase
     /**
      * Ensure that the generator property is set when the parameter is passed a valid value.
      *
-     * @param string $argumentValue         Generator name passed in the command line.
+     * @param string $argumentValue         Generator name passed on the command line.
      * @param string $expectedPropertyValue Expected value of the generator property.
      *
      * @dataProvider dataValidGeneratorNames
