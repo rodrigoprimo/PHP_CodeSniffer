@@ -1,7 +1,7 @@
 <?php
 
 /* testSwitchNormalSyntax */
-switch ($value) /* testSwitchNormalSyntaxScopeOpener */ {
+switch ($value) {
     case 1:
         echo 'one';
         break;
@@ -13,7 +13,8 @@ switch ($value) /* testSwitchNormalSyntaxScopeOpener */ {
 
 // Test for https://github.com/squizlabs/PHP_CodeSniffer/issues/497
 /* testSwitchAlternativeSyntax */
-switch ($value) /* testSwitchAlternativeSyntaxScopeOpener */ :
+switch ($value) :
+    /* testSwitchAlternativeSyntaxEnsureTestWillNotPickUpWrongColon */
     case 1:
         echo 'one';
         break;

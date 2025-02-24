@@ -103,7 +103,7 @@ final class RecurseScopeMapSwitchTokenScopeTest extends AbstractTokenizerTestCas
                     'scope_opener' => T_OPEN_CURLY_BRACKET,
                     'scope_closer' => T_CLOSE_CURLY_BRACKET,
                 ],
-                'testOpenerMarker' => '/* testSwitchNormalSyntaxScopeOpener */',
+                'testOpenerMarker' => null,
                 'testCloserMarker' => '/* testSwitchNormalSyntaxScopeCloser */',
             ],
             'switch alternative syntax'                                          => [
@@ -112,7 +112,7 @@ final class RecurseScopeMapSwitchTokenScopeTest extends AbstractTokenizerTestCas
                     'scope_opener' => T_COLON,
                     'scope_closer' => T_ENDSWITCH,
                 ],
-                'testOpenerMarker' => '/* testSwitchAlternativeSyntaxScopeOpener */',
+                'testOpenerMarker' => null,
                 'testCloserMarker' => '/* testSwitchAlternativeSyntaxScopeCloser */',
             ],
             'switch with closure in the condition'                               => [
