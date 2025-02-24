@@ -37,22 +37,24 @@ switch((function () {
 /* testSwitchClosureWithReturnTypeWithinCondition */
 switch((function (): string {
     return 'bar';
-})()) /* testSwitchClosureWithReturnTypeWithinConditionScopeOpener */ {
+})()) /* testSwitchClosureWithReturnTypeWithinConditionScopeOpener */ :
+    /* testSwitchClosureWithReturnTypeWithinConditionEnsureTestWillNotPickUpWrongColon */
     case 1:
         return 'test';
 /* testSwitchClosureWithReturnTypeWithinConditionScopeCloser */
-}
+endswitch;
 
 /* testSwitchArrowFunctionWithinCondition */
-switch((fn() => 'bar')()) /* testSwitchArrowFunctionWithinConditionScopeOpener */ {
+switch((fn() => $obj->{$foo . $bar})()) /* testSwitchArrowFunctionWithinConditionScopeOpener */ {
     case 1:
         return 'test';
 /* testSwitchArrowFunctionWithinConditionScopeCloser */
 }
 
 /* testSwitchArrowFunctionWithReturnTypeWithinCondition */
-switch((fn(): string => 'bar')()) /* testSwitchArrowFunctionWithReturnTypeWithinConditionScopeOpener */ {
+switch((fn(): string => $condition ? 'foo' : 'bar')()) /* testSwitchArrowFunctionWithReturnTypeWithinConditionScopeOpener */ :
+    /* testSwitchArrowFunctionWithReturnTypeWithinConditionEnsureTestWillNotPickUpWrongColon */
     case 1:
         return 'test';
 /* testSwitchArrowFunctionWithReturnTypeWithinConditionScopeCloser */
-}
+endswitch;
