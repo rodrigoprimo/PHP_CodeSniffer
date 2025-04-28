@@ -232,6 +232,7 @@ StatusWriter::write(var_export([
     'warningsBefore' => $warningsBefore,
     'errorsAfter' => $this->currentFile->getFixableErrorCount(),
     'warningsAfter' => $this->currentFile->getFixableWarningCount(),
+    'numFixes'=> $this->numFixes,
     'errorFixes' => $this->errorFixes,
     'warningFixes' => $this->warningFixes,
 ], true));
