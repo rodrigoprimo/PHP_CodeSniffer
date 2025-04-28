@@ -139,6 +139,18 @@ class Runner
             return $exitCode;
         }//end try
 
+var_export([
+  'files' => $this->reporter->totalFiles,
+  'errors' => $this->reporter->totalErrors,
+  'warnings' => $this->reporter->totalWarnings,
+  'fixable' => $this->reporter->totalFixable,
+//  'fixableErrors' => $this->reporter->totalFixableErrors,
+//  'fixableWarnings' => $this->reporter->totalFixableWarnings,
+  'fixed' => $this->reporter->totalFixed,
+//  'fixedErrors' => $this->reporter->totalFixedErrors,
+//  'fixedWarnings' => $this->reporter->totalFixedWarnings,
+]);
+
         if ($numErrors === 0) {
             // No errors found.
             return 0;
@@ -233,6 +245,18 @@ class Runner
 
             return $exitCode;
         }//end try
+
+var_export([
+  'files' => $this->reporter->totalFiles,
+  'errors' => $this->reporter->totalErrors,
+  'warnings' => $this->reporter->totalWarnings,
+  'fixable' => $this->reporter->totalFixable,
+//  'fixableErrors' => $this->reporter->totalFixableErrors,
+//  'fixableWarnings' => $this->reporter->totalFixableWarnings,
+  'fixed' => $this->reporter->totalFixed,
+//  'fixedErrors' => $this->reporter->totalFixedErrors,
+//  'fixedWarnings' => $this->reporter->totalFixedWarnings,
+]);
 
         if ($this->reporter->totalFixed === 0) {
             // Nothing was fixed by PHPCBF.
