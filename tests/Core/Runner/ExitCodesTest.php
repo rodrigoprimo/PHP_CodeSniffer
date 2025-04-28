@@ -212,6 +212,9 @@ final class ExitCodesTest extends AbstractRunnerTestCase
                 ],
                 'expected'  => 2,
             ],
+
+// TODO: should ignore_non_auto_fixable_on_exit work on PHPCS ? If so: add tests!
+
             'Process error'                                                          => [
                 'extraArgs' => ['--bootstrap=filedoesnotexist.php'],
                 'expected'  => 16,
@@ -395,6 +398,9 @@ final class ExitCodesTest extends AbstractRunnerTestCase
         ];
 
     }//end dataPhpcbf()
+
+
+// TODO: add combination of two flags
 
 
     /**
