@@ -17,6 +17,7 @@ use Phar;
 use PHP_CodeSniffer\Exceptions\DeepExitException;
 use PHP_CodeSniffer\Exceptions\RuntimeException;
 use PHP_CodeSniffer\Util\Common;
+use PHP_CodeSniffer\Util\ExitCode;
 use PHP_CodeSniffer\Util\Help;
 use PHP_CodeSniffer\Util\Standards;
 
@@ -680,10 +681,10 @@ class Config
         case 'h':
         case '?':
             $this->printUsage();
-            throw new DeepExitException('', 0);
+            throw new DeepExitException('', ExitCode::OKAY);
         case 'i' :
             $output = Standards::prepareInstalledStandardsForDisplay().PHP_EOL;
-            throw new DeepExitException($output, 0);
+            throw new DeepExitException($output, ExitCode::OKAY);
         case 'v' :
             if ($this->quiet === true) {
                 // Ignore when quiet mode is enabled.
@@ -749,7 +750,7 @@ class Config
             if ($changed === false && ini_get($ini[0]) !== $ini[1]) {
                 $error  = sprintf('ERROR: Ini option "%s" cannot be changed at runtime.', $ini[0]).PHP_EOL;
                 $error .= $this->printShortUsage(true);
-                throw new DeepExitException($error, 3);
+                throw new DeepExitException($error, ExitCode::PROCESS_ERROR);
             }
             break;
         case 'n' :
@@ -791,11 +792,11 @@ class Config
         switch ($arg) {
         case 'help':
             $this->printUsage();
-            throw new DeepExitException('', 0);
+            throw new DeepExitException('', ExitCode::OKAY);
         case 'version':
             $output  = 'PHP_CodeSniffer version '.self::VERSION.' ('.self::STABILITY.') ';
             $output .= 'by Squiz and PHPCSStandards'.PHP_EOL;
-            throw new DeepExitException($output, 0);
+            throw new DeepExitException($output, ExitCode::OKAY);
         case 'colors':
             if (isset($this->overriddenDefaults['colors']) === true) {
                 break;
@@ -844,7 +845,7 @@ class Config
             ) {
                 $error  = 'ERROR: Setting a config option requires a name and value'.PHP_EOL.PHP_EOL;
                 $error .= $this->printShortUsage(true);
-                throw new DeepExitException($error, 3);
+                throw new DeepExitException($error, ExitCode::PROCESS_ERROR);
             }
 
             $key     = $this->cliArgs[($pos + 1)];
@@ -854,7 +855,7 @@ class Config
             try {
                 $this->setConfigData($key, $value);
             } catch (Exception $e) {
-                throw new DeepExitException($e->getMessage().PHP_EOL, 3);
+                throw new DeepExitException($e->getMessage().PHP_EOL, ExitCode::PROCESS_ERROR);
             }
 
             $output = 'Using config file: '.self::$configDataFile.PHP_EOL.PHP_EOL;
@@ -864,12 +865,12 @@ class Config
             } else {
                 $output .= "Config value \"$key\" updated successfully; old value was \"$current\"".PHP_EOL;
             }
-            throw new DeepExitException($output, 0);
+            throw new DeepExitException($output, ExitCode::OKAY);
         case 'config-delete':
             if (isset($this->cliArgs[($pos + 1)]) === false) {
                 $error  = 'ERROR: Deleting a config option requires the name of the option'.PHP_EOL.PHP_EOL;
                 $error .= $this->printShortUsage(true);
-                throw new DeepExitException($error, 3);
+                throw new DeepExitException($error, ExitCode::PROCESS_ERROR);
             }
 
             $output = 'Using config file: '.self::$configDataFile.PHP_EOL.PHP_EOL;
@@ -882,24 +883,24 @@ class Config
                 try {
                     $this->setConfigData($key, null);
                 } catch (Exception $e) {
-                    throw new DeepExitException($e->getMessage().PHP_EOL, 3);
+                    throw new DeepExitException($e->getMessage().PHP_EOL, ExitCode::PROCESS_ERROR);
                 }
 
                 $output .= "Config value \"$key\" removed successfully; old value was \"$current\"".PHP_EOL;
             }
-            throw new DeepExitException($output, 0);
+            throw new DeepExitException($output, ExitCode::OKAY);
         case 'config-show':
             $data    = self::getAllConfigData();
             $output  = 'Using config file: '.self::$configDataFile.PHP_EOL.PHP_EOL;
             $output .= $this->prepareConfigDataForDisplay($data);
-            throw new DeepExitException($output, 0);
+            throw new DeepExitException($output, ExitCode::OKAY);
         case 'runtime-set':
             if (isset($this->cliArgs[($pos + 1)]) === false
                 || isset($this->cliArgs[($pos + 2)]) === false
             ) {
                 $error  = 'ERROR: Setting a runtime config option requires a name and value'.PHP_EOL.PHP_EOL;
                 $error .= $this->printShortUsage(true);
-                throw new DeepExitException($error, 3);
+                throw new DeepExitException($error, ExitCode::PROCESS_ERROR);
             }
 
             $key   = $this->cliArgs[($pos + 1)];
@@ -952,7 +953,7 @@ class Config
                     if (is_dir($dir) === false) {
                         $error  = 'ERROR: The specified cache file path "'.$this->cacheFile.'" points to a non-existent directory'.PHP_EOL.PHP_EOL;
                         $error .= $this->printShortUsage(true);
-                        throw new DeepExitException($error, 3);
+                        throw new DeepExitException($error, ExitCode::PROCESS_ERROR);
                     }
 
                     if ($dir === '.') {
@@ -978,7 +979,7 @@ class Config
                 if (is_dir($this->cacheFile) === true) {
                     $error  = 'ERROR: The specified cache file path "'.$this->cacheFile.'" is a directory'.PHP_EOL.PHP_EOL;
                     $error .= $this->printShortUsage(true);
-                    throw new DeepExitException($error, 3);
+                    throw new DeepExitException($error, ExitCode::PROCESS_ERROR);
                 }
             } else if (substr($arg, 0, 10) === 'bootstrap=') {
                 $files     = explode(',', substr($arg, 10));
@@ -988,7 +989,7 @@ class Config
                     if ($path === false) {
                         $error  = 'ERROR: The specified bootstrap file "'.$file.'" does not exist'.PHP_EOL.PHP_EOL;
                         $error .= $this->printShortUsage(true);
-                        throw new DeepExitException($error, 3);
+                        throw new DeepExitException($error, ExitCode::PROCESS_ERROR);
                     }
 
                     $bootstrap[] = $path;
@@ -1002,7 +1003,7 @@ class Config
                 if ($path === false) {
                     $error  = 'ERROR: The specified file list "'.$fileList.'" does not exist'.PHP_EOL.PHP_EOL;
                     $error .= $this->printShortUsage(true);
-                    throw new DeepExitException($error, 3);
+                    throw new DeepExitException($error, ExitCode::PROCESS_ERROR);
                 }
 
                 $files = file($path);
@@ -1044,7 +1045,7 @@ class Config
                     if (is_dir($dir) === false) {
                         $error  = 'ERROR: The specified report file path "'.$this->reportFile.'" points to a non-existent directory'.PHP_EOL.PHP_EOL;
                         $error .= $this->printShortUsage(true);
-                        throw new DeepExitException($error, 3);
+                        throw new DeepExitException($error, ExitCode::PROCESS_ERROR);
                     }
 
                     $this->reportFile = $dir.'/'.basename($this->reportFile);
@@ -1055,7 +1056,7 @@ class Config
                 if (is_dir($this->reportFile) === true) {
                     $error  = 'ERROR: The specified report file path "'.$this->reportFile.'" is a directory'.PHP_EOL.PHP_EOL;
                     $error .= $this->printShortUsage(true);
-                    throw new DeepExitException($error, 3);
+                    throw new DeepExitException($error, ExitCode::PROCESS_ERROR);
                 }
             } else if (substr($arg, 0, 13) === 'report-width=') {
                 if (isset($this->overriddenDefaults['reportWidth']) === true) {
@@ -1086,7 +1087,7 @@ class Config
                 if (is_dir($this->basepath) === false) {
                     $error  = 'ERROR: The specified basepath "'.$this->basepath.'" points to a non-existent directory'.PHP_EOL.PHP_EOL;
                     $error .= $this->printShortUsage(true);
-                    throw new DeepExitException($error, 3);
+                    throw new DeepExitException($error, ExitCode::PROCESS_ERROR);
                 }
             } else if ((substr($arg, 0, 7) === 'report=' || substr($arg, 0, 7) === 'report-')) {
                 $reports = [];
@@ -1107,7 +1108,7 @@ class Config
                             if (is_dir($dir) === false) {
                                 $error  = 'ERROR: The specified '.$report.' report file path "'.$output.'" points to a non-existent directory'.PHP_EOL.PHP_EOL;
                                 $error .= $this->printShortUsage(true);
-                                throw new DeepExitException($error, 3);
+                                throw new DeepExitException($error, ExitCode::PROCESS_ERROR);
                             }
 
                             $output = $dir.'/'.basename($output);
@@ -1115,7 +1116,7 @@ class Config
                             if (is_dir($output) === true) {
                                 $error  = 'ERROR: The specified '.$report.' report file path "'.$output.'" is a directory'.PHP_EOL.PHP_EOL;
                                 $error .= $this->printShortUsage(true);
-                                throw new DeepExitException($error, 3);
+                                throw new DeepExitException($error, ExitCode::PROCESS_ERROR);
                             }
                         }//end if
                     }//end if
@@ -1173,7 +1174,7 @@ class Config
                                 $error .= 'PHP_CodeSniffer >= 4.0 only supports scanning PHP files.'.PHP_EOL;
                                 $error .= 'Received: '.substr($arg, 11).PHP_EOL.PHP_EOL;
                                 $error .= $this->printShortUsage(true);
-                                throw new DeepExitException($error, 3);
+                                throw new DeepExitException($error, ExitCode::PROCESS_ERROR);
                             }
                         }
 
@@ -1264,7 +1265,7 @@ class Config
                         $validOptions
                     );
                     $error       .= $this->printShortUsage(true);
-                    throw new DeepExitException($error, 3);
+                    throw new DeepExitException($error, ExitCode::PROCESS_ERROR);
                 }
 
                 $this->generator = $this->validGenerators[$lowerCaseGeneratorName];
@@ -1390,7 +1391,7 @@ class Config
 
             $error .= PHP_EOL;
             $error .= $this->printShortUsage(true);
-            throw new DeepExitException(ltrim($error), 3);
+            throw new DeepExitException(ltrim($error), ExitCode::PROCESS_ERROR);
         }
 
         return $sniffs;
@@ -1419,7 +1420,7 @@ class Config
 
             $error  = "ERROR: option \"$arg\" not known".PHP_EOL.PHP_EOL;
             $error .= $this->printShortUsage(true);
-            throw new DeepExitException($error, 3);
+            throw new DeepExitException($error, ExitCode::PROCESS_ERROR);
         }
 
         $this->processFilePath($arg);
@@ -1450,7 +1451,7 @@ class Config
 
             $error  = 'ERROR: The file "'.$path.'" does not exist.'.PHP_EOL.PHP_EOL;
             $error .= $this->printShortUsage(true);
-            throw new DeepExitException($error, 3);
+            throw new DeepExitException($error, ExitCode::PROCESS_ERROR);
         } else {
             // Can't modify the files array directly because it's not a real
             // class member, so need to use this little get/modify/set trick.
@@ -1658,7 +1659,7 @@ class Config
                 && is_writable($configFile) === false
             ) {
                 $error = 'ERROR: Config file '.$configFile.' is not writable'.PHP_EOL.PHP_EOL;
-                throw new DeepExitException($error, 3);
+                throw new DeepExitException($error, ExitCode::PROCESS_ERROR);
             }
         }//end if
 
@@ -1679,7 +1680,7 @@ class Config
 
             if (file_put_contents($configFile, $output) === false) {
                 $error = 'ERROR: Config file '.$configFile.' could not be written'.PHP_EOL.PHP_EOL;
-                throw new DeepExitException($error, 3);
+                throw new DeepExitException($error, ExitCode::PROCESS_ERROR);
             }
 
             self::$configDataFile = $configFile;
@@ -1737,7 +1738,7 @@ class Config
 
         if (Common::isReadable($configFile) === false) {
             $error = 'ERROR: Config file '.$configFile.' is not readable'.PHP_EOL.PHP_EOL;
-            throw new DeepExitException($error, 3);
+            throw new DeepExitException($error, ExitCode::PROCESS_ERROR);
         }
 
         include $configFile;
