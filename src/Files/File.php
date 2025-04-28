@@ -521,6 +521,7 @@ class File
             StatusWriter::write('*** END SNIFF PROCESSING REPORT ***', 1);
         }
 
+        $this->fixedCount        += $this->fixer->getFixCount();
         $this->fixedErrorCount   += $this->fixer->getFixedErrorCount();
         $this->fixedWarningCount += $this->fixer->getFixedWarningCount();
 
@@ -528,6 +529,7 @@ StatusWriter::write(var_export([
     'getFixCount from fixer' => $this->fixer->getFixCount(),
     'fixedErrorCount from fixer' => $this->fixer->getFixedErrorCount(),
     'fixedWarningCount from fixer' => $this->fixer->getFixedWarningCount(),
+    'fixedCount' => $this->fixedCount,
     'fixedErrorCount' => $this->fixedErrorCount,
     'fixedWarningCount' => $this->fixedWarningCount,
 ], true));
