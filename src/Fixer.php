@@ -108,6 +108,20 @@ class Fixer
      */
     private $numFixes = 0;
 
+    /**
+     * The number of error fixes that have been performed.
+     *
+     * @var integer
+     */
+    private $errorFixes = 0;
+
+    /**
+     * The number of warning fixes that have been performed.
+     *
+     * @var integer
+     */
+    private $warningFixes = 0;
+
 
     /**
      * Starts fixing a new file.
@@ -118,9 +132,11 @@ class Fixer
      */
     public function startFile(File $phpcsFile)
     {
-        $this->currentFile = $phpcsFile;
-        $this->numFixes    = 0;
-        $this->fixedTokens = [];
+        $this->currentFile  = $phpcsFile;
+        $this->numFixes     = 0;
+        $this->errorFixes   = 0;
+        $this->warningFixes = 0;
+        $this->fixedTokens  = [];
 
         $tokens       = $phpcsFile->getTokens();
         $this->tokens = [];
@@ -153,7 +169,10 @@ class Fixer
         // Pause the StatusWriter to silence Tokenizer debug info about the file being retokenized for each loop.
         StatusWriter::pause();
 
-        $this->loops = 0;
+        $this->loops    = 0;
+        $errorsBefore   = $this->currentFile->getFixableErrorCount();
+        $warningsBefore = $this->currentFile->getFixableWarningCount();
+
         while ($this->loops < 50) {
             // Only needed once file content has changed.
             $contents = $this->getContents();
@@ -201,9 +220,21 @@ class Fixer
             }
         }//end while
 
+        $this->errorFixes   = ($errorsBefore - $this->currentFile->getFixableErrorCount());
+        $this->warningFixes = ($warningsBefore - $this->currentFile->getFixableWarningCount());
+
         $this->enabled = false;
 
         StatusWriter::resume();
+
+StatusWriter::write(var_export([
+    'errorsBefore' => $errorsBefore,
+    'warningsBefore' => $warningsBefore,
+    'errorsAfter' => $this->currentFile->getFixableErrorCount(),
+    'warningsAfter' => $this->currentFile->getFixableWarningCount(),
+    'errorFixes' => $this->errorFixes,
+    'warningFixes' => $this->warningFixes,
+], true));
 
         if ($this->numFixes > 0 || $this->inConflict === true) {
             if (PHP_CODESNIFFER_VERBOSITY > 1) {
@@ -348,6 +379,36 @@ class Fixer
         return $this->numFixes;
 
     }//end getFixCount()
+
+
+    /**
+     * Get a count of error fixes that have been performed on the file.
+     *
+     * This value is reset every time a new file is started, or an existing
+     * file is restarted.
+     *
+     * @return int
+     */
+    public function getFixedErrorCount()
+    {
+        return $this->errorFixes;
+
+    }//end getFixedErrorCount()
+
+
+    /**
+     * Get a count of warning fixes that have been performed on the file.
+     *
+     * This value is reset every time a new file is started, or an existing
+     * file is restarted.
+     *
+     * @return int
+     */
+    public function getFixedWarningCount()
+    {
+        return $this->warningFixes;
+
+    }//end getFixedWarningCount()
 
 
     /**

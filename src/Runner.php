@@ -142,18 +142,16 @@ class Runner
 
         return ExitCode::calculate($this->reporter, 'phpcs');
 
-// TODO: This needs work
-
 var_export([
   'files' => $this->reporter->totalFiles,
   'errors' => $this->reporter->totalErrors,
   'warnings' => $this->reporter->totalWarnings,
   'fixable' => $this->reporter->totalFixable,
-//  'fixableErrors' => $this->reporter->totalFixableErrors,
-//  'fixableWarnings' => $this->reporter->totalFixableWarnings,
+  'fixableErrors' => $this->reporter->totalFixableErrors,
+  'fixableWarnings' => $this->reporter->totalFixableWarnings,
   'fixed' => $this->reporter->totalFixed,
-//  'fixedErrors' => $this->reporter->totalFixedErrors,
-//  'fixedWarnings' => $this->reporter->totalFixedWarnings,
+  'fixedErrors' => $this->reporter->totalFixedErrors,
+  'fixedWarnings' => $this->reporter->totalFixedWarnings,
 ]);
 
 /*
@@ -299,11 +297,11 @@ var_export([
   'errors' => $this->reporter->totalErrors,
   'warnings' => $this->reporter->totalWarnings,
   'fixable' => $this->reporter->totalFixable,
-//  'fixableErrors' => $this->reporter->totalFixableErrors,
-//  'fixableWarnings' => $this->reporter->totalFixableWarnings,
+  'fixableErrors' => $this->reporter->totalFixableErrors,
+  'fixableWarnings' => $this->reporter->totalFixableWarnings,
   'fixed' => $this->reporter->totalFixed,
-//  'fixedErrors' => $this->reporter->totalFixedErrors,
-//  'fixedWarnings' => $this->reporter->totalFixedWarnings,
+  'fixedErrors' => $this->reporter->totalFixedErrors,
+  'fixedWarnings' => $this->reporter->totalFixedWarnings,
 ]);
 
 /*
@@ -566,11 +564,13 @@ var_export([
 
                     // Reset the reporter to make sure only figures from this
                     // file batch are recorded.
-                    $this->reporter->totalFiles    = 0;
-                    $this->reporter->totalErrors   = 0;
-                    $this->reporter->totalWarnings = 0;
-                    $this->reporter->totalFixable  = 0;
-                    $this->reporter->totalFixed    = 0;
+                    $this->reporter->totalFiles           = 0;
+                    $this->reporter->totalErrors          = 0;
+                    $this->reporter->totalWarnings        = 0;
+                    $this->reporter->totalFixableErrors   = 0;
+                    $this->reporter->totalFixableWarnings = 0;
+                    $this->reporter->totalFixedErrors     = 0;
+                    $this->reporter->totalFixedWarnings   = 0;
 
                     // Process the files.
                     $pathsProcessed = [];
@@ -605,11 +605,13 @@ var_export([
                     // Write information about the run to the filesystem
                     // so it can be picked up by the main process.
                     $childOutput = [
-                        'totalFiles'    => $this->reporter->totalFiles,
-                        'totalErrors'   => $this->reporter->totalErrors,
-                        'totalWarnings' => $this->reporter->totalWarnings,
-                        'totalFixable'  => $this->reporter->totalFixable,
-                        'totalFixed'    => $this->reporter->totalFixed,
+                        'totalFiles'           => $this->reporter->totalFiles,
+                        'totalErrors'          => $this->reporter->totalErrors,
+                        'totalWarnings'        => $this->reporter->totalWarnings,
+                        'totalFixableErrors'   => $this->reporter->totalFixableErrors,
+                        'totalFixableWarnings' => $this->reporter->totalFixableWarnings,
+                        'totalFixedErrors'     => $this->reporter->totalFixedErrors,
+                        'totalFixedWarnings'   => $this->reporter->totalFixedWarnings,
                     ];
 
                     $output  = '<'.'?php'."\n".' $childOutput = ';
@@ -651,12 +653,19 @@ var_export([
         if ($this->config->cache === true) {
             Cache::save();
         }
-
 /*
-        $ignoreWarnings       = Config::getConfigData('ignore_warnings_on_exit') ?? false;
-        $ignoreErrors         = Config::getConfigData('ignore_errors_on_exit') ?? false;
+var_export([
+  'files' => $this->reporter->totalFiles,
+  'errors' => $this->reporter->totalErrors,
+  'warnings' => $this->reporter->totalWarnings,
+  'fixable' => $this->reporter->totalFixable,
+  'fixed' => $this->reporter->totalFixed,
+]);
+
+        $ignoreWarnings       = (Config::getConfigData('ignore_warnings_on_exit') ?? false);
+        $ignoreErrors         = (Config::getConfigData('ignore_errors_on_exit') ?? false);
 // Should this be PHPCBF only ?
-        $ignoreNonAutofixable = Config::getConfigData('ignore_non_auto_fixable_on_exit') ?? false;
+        $ignoreNonAutofixable = (Config::getConfigData('ignore_non_auto_fixable_on_exit') ?? false);
 
         $return = ($this->reporter->totalErrors + $this->reporter->totalWarnings);
         if ((bool) $ignoreErrors === true) {
@@ -733,8 +742,9 @@ var_export([
                 }
 
                 if (PHP_CODESNIFFER_CBF === true) {
-                    $errors = $file->getFixableCount();
-                    StatusWriter::write(" ($errors fixable violations)");
+                    $errors   = $file->getFixableErrorCount();
+                    $warnings = $file->getFixableWarningCount();
+                    StatusWriter::write(" ($errors fixable errors, $warnings fixable warnings)");
                 } else {
                     $errors   = $file->getErrorCount();
                     $warnings = $file->getWarningCount();
@@ -875,17 +885,19 @@ var_export([
             if (isset($childOutput) === false) {
                 // The child process died, so the run has failed.
                 $file = new DummyFile('', $this->ruleset, $this->config);
-                $file->setErrorCounts(1, 0, 0, 0);
+                $file->setErrorCounts(1, 0, 0, 0, 0, 0);
                 $this->printProgress($file, $totalBatches, $numProcessed);
                 $success = false;
                 continue;
             }
 
-            $this->reporter->totalFiles    += $childOutput['totalFiles'];
-            $this->reporter->totalErrors   += $childOutput['totalErrors'];
-            $this->reporter->totalWarnings += $childOutput['totalWarnings'];
-            $this->reporter->totalFixable  += $childOutput['totalFixable'];
-            $this->reporter->totalFixed    += $childOutput['totalFixed'];
+            $this->reporter->totalFiles           += $childOutput['totalFiles'];
+            $this->reporter->totalErrors          += $childOutput['totalErrors'];
+            $this->reporter->totalWarnings        += $childOutput['totalWarnings'];
+            $this->reporter->totalFixableErrors   += $childOutput['totalFixableErrors'];
+            $this->reporter->totalFixableWarnings += $childOutput['totalFixableWarnings'];
+            $this->reporter->totalFixedErrors     += $childOutput['totalFixedErrors'];
+            $this->reporter->totalFixedWarnings   += $childOutput['totalFixedWarnings'];
 
             if (isset($debugOutput) === true) {
                 echo $debugOutput;
@@ -902,8 +914,10 @@ var_export([
             $file->setErrorCounts(
                 $childOutput['totalErrors'],
                 $childOutput['totalWarnings'],
-                $childOutput['totalFixable'],
-                $childOutput['totalFixed']
+                $childOutput['totalFixableErrors'],
+                $childOutput['totalFixableWarnings'],
+                $childOutput['totalFixedErrors'],
+                $childOutput['totalFixedWarnings']
             );
             $this->printProgress($file, $totalBatches, $numProcessed);
         }//end while

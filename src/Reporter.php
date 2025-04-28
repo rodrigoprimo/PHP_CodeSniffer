@@ -52,14 +52,42 @@ class Reporter
      *
      * @var integer
      */
-    public $totalFixable = 0;
+//    public $totalFixable = 0;
+
+    /**
+     * Total number of errors that can be fixed.
+     *
+     * @var integer
+     */
+    public $totalFixableErrors = 0;
+
+    /**
+     * Total number of warnings that can be fixed.
+     *
+     * @var integer
+     */
+    public $totalFixableWarnings = 0;
 
     /**
      * Total number of errors/warnings that were fixed.
      *
      * @var integer
      */
-    public $totalFixed = 0;
+//    public $totalFixed = 0;
+
+    /**
+     * Total number of errors that were fixed.
+     *
+     * @var integer
+     */
+    public $totalFixedErrors = 0;
+
+    /**
+     * Total number of warnings that were fixed.
+     *
+     * @var integer
+     */
+    public $totalFixedWarnings = 0;
 
     /**
      * A cache of report objects.
@@ -158,6 +186,30 @@ class Reporter
         }//end foreach
 
     }//end __construct()
+
+
+    /**
+     * Get the value of an inaccessible property.
+     *
+     * @param string $name The name of the property.
+     *
+     * @return int
+     *
+     * @throws \PHP_CodeSniffer\Exceptions\RuntimeException If the setting name is invalid.
+     */
+    public function __get($name)
+    {
+        if ($name === 'totalFixable') {
+            return ($this->totalFixableErrors + $this->totalFixableWarnings);
+        }
+
+        if ($name === 'totalFixed') {
+            return ($this->totalFixedErrors + $this->totalFixedWarnings);
+        }
+
+        throw new RuntimeException("ERROR: unknown property \"$name\"");
+
+    }//end __get()
 
 
     /**
@@ -307,12 +359,12 @@ class Reporter
 
             // When PHPCBF is running, we need to use the fixable error values
             // after the report has run and fixed what it can.
-            if (PHP_CODESNIFFER_CBF === true) {
-                $this->totalFixable += $phpcsFile->getFixableCount();
-                $this->totalFixed   += $phpcsFile->getFixedCount();
-            } else {
-                $this->totalFixable += $reportData['fixable'];
-            }
+//            $this->totalFixable         += $phpcsFile->getFixableCount();
+            $this->totalFixableErrors   += $phpcsFile->getFixableErrorCount();
+            $this->totalFixableWarnings += $phpcsFile->getFixableWarningCount();
+//            $this->totalFixed           += $phpcsFile->getFixedCount();
+            $this->totalFixedErrors     += $phpcsFile->getFixedErrorCount();
+            $this->totalFixedWarnings   += $phpcsFile->getFixedWarningCount();
         }
 
     }//end cacheFileReport()

@@ -153,18 +153,32 @@ class File
     protected $warningCount = 0;
 
     /**
-     * The total number of errors and warnings that can be fixed.
+     * The total number of errors that can be fixed.
      *
      * @var integer
      */
-    protected $fixableCount = 0;
+    protected $fixableErrorCount = 0;
 
     /**
-     * The total number of errors and warnings that were fixed.
+     * The total number of warnings that can be fixed.
      *
      * @var integer
      */
-    protected $fixedCount = 0;
+    protected $fixableWarningCount = 0;
+
+    /**
+     * The total number of errors that were fixed.
+     *
+     * @var integer
+     */
+    protected $fixedErrorCount = 0;
+
+    /**
+     * The total number of warnings that were fixed.
+     *
+     * @var integer
+     */
+    protected $fixedWarningCount = 0;
 
     /**
      * TRUE if errors are being replayed from the cache.
@@ -309,11 +323,12 @@ class File
             return;
         }
 
-        $this->errors       = [];
-        $this->warnings     = [];
-        $this->errorCount   = 0;
-        $this->warningCount = 0;
-        $this->fixableCount = 0;
+        $this->errors            = [];
+        $this->warnings          = [];
+        $this->errorCount        = 0;
+        $this->warningCount      = 0;
+        $this->fixableErrorCount = 0;
+        $this->fixableWarningCount = 0;
 
         $this->parse();
 
@@ -351,11 +366,12 @@ class File
                     || substr($commentTextLower, 0, 17) === '@phpcs:ignorefile'
                 ) {
                     // Ignoring the whole file, just a little late.
-                    $this->errors       = [];
-                    $this->warnings     = [];
-                    $this->errorCount   = 0;
-                    $this->warningCount = 0;
-                    $this->fixableCount = 0;
+                    $this->errors            = [];
+                    $this->warnings          = [];
+                    $this->errorCount        = 0;
+                    $this->warningCount      = 0;
+                    $this->fixableErrorCount = 0;
+                    $this->fixableWarningCount = 0;
                     return;
                 } else if (substr($commentTextLower, 0, 9) === 'phpcs:set'
                     || substr($commentTextLower, 0, 10) === '@phpcs:set'
@@ -505,7 +521,16 @@ class File
             StatusWriter::write('*** END SNIFF PROCESSING REPORT ***', 1);
         }
 
-        $this->fixedCount += $this->fixer->getFixCount();
+        $this->fixedErrorCount   += $this->fixer->getFixedErrorCount();
+        $this->fixedWarningCount += $this->fixer->getFixedWarningCount();
+
+StatusWriter::write(var_export([
+    'getFixCount from fixer' => $this->fixer->getFixCount(),
+    'fixedErrorCount from fixer' => $this->fixer->getFixedErrorCount(),
+    'fixedWarningCount from fixer' => $this->fixer->getFixedWarningCount(),
+    'fixedErrorCount' => $this->fixedErrorCount,
+    'fixedWarningCount' => $this->fixedWarningCount,
+], true));
 
     }//end process()
 
@@ -1004,7 +1029,11 @@ class File
 
         $messageCount++;
         if ($fixable === true) {
-            $this->fixableCount++;
+            if ($error === true) {
+                $this->fixableErrorCount++;
+            } else {
+                $this->fixableWarningCount++;
+            }
         }
 
         if ($this->configCache['recordErrors'] === false
@@ -1114,9 +1143,33 @@ class File
      */
     public function getFixableCount()
     {
-        return $this->fixableCount;
+        return ($this->fixableErrorCount + $this->fixableWarningCount);
 
     }//end getFixableCount()
+
+
+    /**
+     * Returns the number of fixable errors raised.
+     *
+     * @return int
+     */
+    public function getFixableErrorCount()
+    {
+        return $this->fixableErrorCount;
+
+    }//end getFixableErrorCount()
+
+
+    /**
+     * Returns the number of fixable warnings raised.
+     *
+     * @return int
+     */
+    public function getFixableWarningCount()
+    {
+        return $this->fixableWarningCount;
+
+    }//end getFixableWarningCount()
 
 
     /**
@@ -1126,9 +1179,33 @@ class File
      */
     public function getFixedCount()
     {
-        return $this->fixedCount;
+        return ($this->fixedErrorCount + $this->fixedWarningCount);
 
     }//end getFixedCount()
+
+
+    /**
+     * Returns the number of fixed errors.
+     *
+     * @return int
+     */
+    public function getFixedErrorCount()
+    {
+        return $this->fixedErrorCount;
+
+    }//end getFixedErrorCount()
+
+
+    /**
+     * Returns the number of fixed warnings.
+     *
+     * @return int
+     */
+    public function getFixedWarningCount()
+    {
+        return $this->fixedWarningCount;
+
+    }//end getFixedWarningCount()
 
 
     /**
