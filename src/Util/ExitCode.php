@@ -70,4 +70,24 @@ final class ExitCode
     public const REQUIREMENTS_NOT_MET = 64;
 
 
+    /**
+     * @TODO: description + figure out if this is needed and whether it should set or return
+     */
+    public function setFlag(int $flag)
+    {
+        $this->flags |= $flag;
+
+    }//end setFlag()
+
+
+    /**
+     * @TODO: description + figure out if this is needed and whether it should set or return
+     */
+    public function unsetFlag(int $flag)
+    {
+        $this->flags &= ~$flag;
+
+    }//end unsetFlag()
+
+
 }//end class
