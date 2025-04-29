@@ -26,6 +26,9 @@ final class ExitCodesTest extends AbstractRunnerTestCase
     private const SOURCE_DIR = __DIR__.'/Fixtures/ExitCodesTest/';
 
 
+// See if I can set up a test to test the behaviour with code provided via STDIN (probably in a separate test file for testing STDIN in general)
+
+
     /**
      * Clean up after the tests.
      *
