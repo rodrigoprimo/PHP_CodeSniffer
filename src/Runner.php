@@ -140,6 +140,8 @@ class Runner
             return $exitCode;
         }//end try
 
+// TODO: This needs work
+
 var_export([
   'files' => $this->reporter->totalFiles,
   'errors' => $this->reporter->totalErrors,
@@ -152,15 +154,52 @@ var_export([
 //  'fixedWarnings' => $this->reporter->totalFixedWarnings,
 ]);
 
+/*
+        $ignoreWarnings       = Config::getConfigData('ignore_warnings_on_exit') ?? false;
+        $ignoreErrors         = Config::getConfigData('ignore_errors_on_exit') ?? false;
+        $ignoreNonAutofixable = Config::getConfigData('ignore_non_auto_fixable_on_exit') ?? false;
+
+        $return = ($this->reporter->totalErrors + $this->reporter->totalWarnings);
+        if ($ignoreErrors === true) {
+            $return -= $this->reporter->totalErrors;
+        }
+
+        if ($ignoreWarnings === true) {
+            $return -= $this->reporter->totalWarnings;
+        }
+
+        return $return;
+*/
+
+
+        $ignoreWarnings       = (Config::getConfigData('ignore_warnings_on_exit') ?? false);
+        $ignoreErrors         = (Config::getConfigData('ignore_errors_on_exit') ?? false);
+        $ignoreNonAutofixable = (Config::getConfigData('ignore_non_auto_fixable_on_exit') ?? false);
+
+
+
+
+
+
+
+
+
+
+
+
         if ($numErrors === 0) {
-            // No errors found.
-            return 0;
+            // No issues found.
+            return ExitCode::OKAY;
+        } else if ($this->reporter->totalFixable === $numErrors) {
+// This is imprecise - Fixable contains total fixable errors/warnings, but we may be ignoring errors/warnings
+            // Issues found, all of which can be fixed by PHPCBF.
+            return ExitCode::FIXABLE;
         } else if ($this->reporter->totalFixable === 0) {
-            // Errors found, but none of them can be fixed by PHPCBF.
-            return 1;
+            // Issues found, but none of them can be fixed by PHPCBF.
+            return ExitCode::NON_FIXABLE;
         } else {
-            // Errors found, and some can be fixed by PHPCBF.
-            return 2;
+            // Issues found, and some can be fixed by PHPCBF.
+            return (ExitCode::FIXABLE | ExitCode::NON_FIXABLE);
         }
 
     }//end runPHPCS()
@@ -247,6 +286,10 @@ var_export([
             return $exitCode;
         }//end try
 
+        $ignoreNonAutofixable = (Config::getConfigData('ignore_non_auto_fixable_on_exit') ?? false);
+
+// TODO: This needs work
+
 var_export([
   'files' => $this->reporter->totalFiles,
   'errors' => $this->reporter->totalErrors,
@@ -259,24 +302,65 @@ var_export([
 //  'fixedWarnings' => $this->reporter->totalFixedWarnings,
 ]);
 
+/*
+
+        $ignoreWarnings       = Config::getConfigData('ignore_warnings_on_exit') ?? false;
+        $ignoreErrors         = Config::getConfigData('ignore_errors_on_exit') ?? false;
+// Should this be PHPCBF only ?
+        $ignoreNonAutofixable = Config::getConfigData('ignore_non_auto_fixable_on_exit') ?? false;
+
+        $return = ($this->reporter->totalErrors + $this->reporter->totalWarnings);
+        if ($ignoreErrors === true) {
+            $return -= $this->reporter->totalErrors;
+        }
+
+        if ($ignoreWarnings === true) {
+            $return -= $this->reporter->totalWarnings;
+        }
+
+        return $return;
+*/
+
+        $totalIssues      = ($this->reporter->totalErrors + $this->reporter->totalWarnings);
+        $nonFixableIssues = ($totalIssues - $this->reporter->totalFixable - $this->reporter->totalFixed);
+
         if ($this->reporter->totalFixed === 0) {
             // Nothing was fixed by PHPCBF.
             if ($this->reporter->totalFixable === 0) {
                 // Nothing found that could be fixed.
-                return 0;
+                if ($nonFixableIssues > 0) {
+                    return ExitCode::NON_FIXABLE;
+                } else {
+                    return ExitCode::OKAY;
+                }
             } else {
                 // Something failed to fix.
-                return 2;
+                $exitCode = (ExitCode::FAILED_TO_FIX | ExitCode::FIXABLE);
+                if ($nonFixableIssues > 0) {
+                    return ($exitCode | ExitCode::NON_FIXABLE);
+                } else {
+                    return $exitCode;
+                }
             }
         }
 
         if ($this->reporter->totalFixable === 0) {
             // PHPCBF fixed all fixable errors.
-            return 1;
+            // Check if there are non-fixable issues remaining.
+            if ($nonFixableIssues > 0) {
+                return ExitCode::NON_FIXABLE;
+            } else {
+                return ExitCode::OKAY;
+            }
         }
 
         // PHPCBF fixed some fixable errors, but others failed to fix.
-        return 2;
+        $exitCode = (ExitCode::FAILED_TO_FIX | ExitCode::FIXABLE);
+        if ($nonFixableIssues > 0) {
+            return ($exitCode | ExitCode::NON_FIXABLE);
+        } else {
+            return $exitCode;
+        }
 
     }//end runPHPCBF()
 
@@ -563,22 +647,18 @@ var_export([
             Cache::save();
         }
 
-        $ignoreWarnings = Config::getConfigData('ignore_warnings_on_exit');
-        $ignoreErrors   = Config::getConfigData('ignore_errors_on_exit');
+        $ignoreWarnings       = Config::getConfigData('ignore_warnings_on_exit') ?? false;
+        $ignoreErrors         = Config::getConfigData('ignore_errors_on_exit') ?? false;
+// Should this be PHPCBF only ?
+        $ignoreNonAutofixable = Config::getConfigData('ignore_non_auto_fixable_on_exit') ?? false;
 
         $return = ($this->reporter->totalErrors + $this->reporter->totalWarnings);
-        if ($ignoreErrors !== null) {
-            $ignoreErrors = (bool) $ignoreErrors;
-            if ($ignoreErrors === true) {
-                $return -= $this->reporter->totalErrors;
-            }
+        if ((bool) $ignoreErrors === true) {
+            $return -= $this->reporter->totalErrors;
         }
 
-        if ($ignoreWarnings !== null) {
-            $ignoreWarnings = (bool) $ignoreWarnings;
-            if ($ignoreWarnings === true) {
-                $return -= $this->reporter->totalWarnings;
-            }
+        if ((bool) $ignoreWarnings === true) {
+            $return -= $this->reporter->totalWarnings;
         }
 
         return $return;
