@@ -140,6 +140,8 @@ class Runner
             return $exitCode;
         }//end try
 
+        return ExitCode::calculate($this->reporter, 'phpcs');
+
 // TODO: This needs work
 
 var_export([
@@ -286,6 +288,8 @@ var_export([
             return $exitCode;
         }//end try
 
+        return ExitCode::calculate($this->reporter, 'phpcbf');
+
         $ignoreNonAutofixable = (Config::getConfigData('ignore_non_auto_fixable_on_exit') ?? false);
 
 // TODO: This needs work
@@ -427,7 +431,8 @@ var_export([
     /**
      * Performs the run.
      *
-     * @return int The number of errors and warnings found.
+     * @return void
+     *
      * @throws \PHP_CodeSniffer\Exceptions\DeepExitException
      * @throws \PHP_CodeSniffer\Exceptions\RuntimeException
      */
@@ -647,6 +652,7 @@ var_export([
             Cache::save();
         }
 
+/*
         $ignoreWarnings       = Config::getConfigData('ignore_warnings_on_exit') ?? false;
         $ignoreErrors         = Config::getConfigData('ignore_errors_on_exit') ?? false;
 // Should this be PHPCBF only ?
@@ -662,7 +668,7 @@ var_export([
         }
 
         return $return;
-
+*/
     }//end run()
 
 
