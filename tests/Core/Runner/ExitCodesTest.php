@@ -17,6 +17,8 @@ use PHP_CodeSniffer\Tests\Core\StatusWriterTestHelper;
  *
  * @covers \PHP_CodeSniffer\Runner::runPHPCS
  * @covers \PHP_CodeSniffer\Runner::runPHPCBF
+ *
+ * @covers \PHP_CodeSniffer\Util\ExitCode
  */
 final class ExitCodesTest extends AbstractRunnerTestCase
 {
