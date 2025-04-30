@@ -167,6 +167,13 @@ class File
     protected $fixableWarningCount = 0;
 
     /**
+     * The type of error that can be fixed. Can be 'error' or 'warning'.
+     *
+     * @var string
+     */
+    public $fixableType = '';
+
+    /**
      * The total number of errors that were fixed.
      *
      * @var integer
@@ -1032,8 +1039,10 @@ StatusWriter::write(var_export([
         $messageCount++;
         if ($fixable === true) {
             if ($error === true) {
+                $this->fixableType = 'error';
                 $this->fixableErrorCount++;
             } else {
+                $this->fixableType = 'warning';
                 $this->fixableWarningCount++;
             }
         }
