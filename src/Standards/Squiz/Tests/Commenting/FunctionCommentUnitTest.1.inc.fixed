@@ -1200,14 +1200,16 @@ function doNotTruncateClassNamesContainingUnderscoresInTheMiddelOfType() {
  *
  * @see https://phpstan.org/blog/generics-in-php-using-phpdocs
  *
- * @param array<int, string>                     $array      An array param.
- * @param iterable<string>                       $iterable   An iterable param.
- * @param int<0, 100>                            $int        An int range param.
- * @param \MyProject\Sub\Collection<int, string> $collection A collection param.
+ * @param array<int, string>                     $array         An array param.
+ * @param iterable<string>                       $iterable      An iterable param.
+ * @param int<0, 100>                            $int           An int range param.
+ * @param \MyProject\Sub\Collection<int, string> $collection    A collection param.
+ * @param Collection<int, Map<string, mixed>>    $nestedGeneric A nested generic param.
+ * @param Collection<int, array<string, mixed>>  $nestedArray   A nested generic param. Exposed bug: strpos match on "array" takes precedence.
  *
  * @return \MyProject\Sub\Collection<int, string>
  */
-public function genericTypeWithTypeDeclaration(array $array, iterable $iterable, int $int, Collection $collection): Collection
+public function genericTypeWithTypeDeclaration(array $array, iterable $iterable, int $int, Collection $collection, Collection $nestedGeneric, Collection $nestedArray): Collection
 {
     return $collection;
 }//end genericTypeWithTypeDeclaration()
@@ -1215,14 +1217,16 @@ public function genericTypeWithTypeDeclaration(array $array, iterable $iterable,
 /**
  * Generic types in the docblock when a method has no type declarations.
  *
- * @param array<int, string>                     $array      An array param.
- * @param iterable<string>                       $iterable   An iterable param.
- * @param int<0, 100>                            $int        An int range param.
- * @param \MyProject\Sub\Collection<int, string> $collection A collection param.
+ * @param array<int, string>                     $array         An array param.
+ * @param iterable<string>                       $iterable      An iterable param.
+ * @param int<0, 100>                            $int           An int range param.
+ * @param \MyProject\Sub\Collection<int, string> $collection    A collection param.
+ * @param Collection<int, Map<string, mixed>>    $nestedGeneric A nested generic param.
+ * @param Collection<int, array<string, mixed>>  $nestedArray   A nested generic param. Exposed bug: strpos match on "array" takes precedence.
  *
  * @return \MyProject\Sub\Collection<int, string>
  */
-public function genericTypeWithoutTypeDeclaration($array, $iterable, $int, $collection)
+public function genericTypeWithoutTypeDeclaration($array, $iterable, $int, $collection, $nestedGeneric, $nestedArray)
 {
     return $collection;
 }//end genericTypeWithoutTypeDeclaration()
