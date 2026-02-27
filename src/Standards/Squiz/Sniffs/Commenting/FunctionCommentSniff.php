@@ -434,7 +434,7 @@ class FunctionCommentSniff extends PEARFunctionCommentSniff
                     $suggestedTypeHint = 'callable';
                 } elseif (strpos($suggestedName, 'callback') !== false) {
                     $suggestedTypeHint = 'callable';
-                } elseif (preg_match('/^([^<]+)<[^>]+>$/', $suggestedName, $matches)) {
+                } elseif (preg_match('/^([^<]+)<[^>]+>$/', $suggestedName, $matches) === 1) {
                     $suggestedTypeHint = $matches[1];
                 } elseif (isset(Common::ALLOWED_TYPES[$suggestedName]) === false) {
                     $suggestedTypeHint = $suggestedName;

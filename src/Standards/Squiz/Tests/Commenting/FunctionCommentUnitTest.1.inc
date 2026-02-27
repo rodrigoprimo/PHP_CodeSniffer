@@ -1196,13 +1196,33 @@ function doNotTruncateClassNamesContainingUnderscoresInTheMiddelOfType() {
 }
 
 /**
- * Using generic as a type hint should satisfy a specified object parameter type.
+ * Generic types in the docblock should match the base type in the type declaration.
+ *
  * @see https://phpstan.org/blog/generics-in-php-using-phpdocs
  *
- * @param Collection<int, string> $values An object with int, string pairs.
+ * @param array<int, string>                     $array      An array param.
+ * @param iterable<string>                       $iterable   An iterable param.
+ * @param int<0, 100>                            $int        An int range param.
+ * @param \MyProject\Sub\Collection<int, string> $collection A collection param.
  *
- * @return void
+ * @return \MyProject\Sub\Collection<int, string>
  */
-public function genericType(Collection $values) {
+public function genericTypeWithTypeDeclaration(array $array, iterable $iterable, int $int, Collection $collection): Collection
+{
+    return $collection;
+}//end genericTypeWithTypeDeclaration()
 
-}// end genericType()
+/**
+ * Generic types in the docblock when a method has no type declarations.
+ *
+ * @param array<int, string>                     $array      An array param.
+ * @param iterable<string>                       $iterable   An iterable param.
+ * @param int<0, 100>                            $int        An int range param.
+ * @param \MyProject\Sub\Collection<int, string> $collection A collection param.
+ *
+ * @return \MyProject\Sub\Collection<int, string>
+ */
+public function genericTypeWithoutTypeDeclaration($array, $iterable, $int, $collection)
+{
+    return $collection;
+}//end genericTypeWithoutTypeDeclaration()
